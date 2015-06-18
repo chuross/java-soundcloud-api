@@ -1,12 +1,41 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.7
 version = '1.0'
 
-repositories {
-    mavenCentral()
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java']
+        resources.srcDirs = ['src/main/resources']
+    }
+    test {
+        java.srcDirs = ['src/test/java']
+        resources.srcDirs = ['src/test/resources']
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: System.getenv('LOCAL_MAVEN_REPOSITORY_URL')
+            pom.version = '1.0.0'
+            pom.groupId = 'com.github.chuross'
+            pom.artifactId = 'soundcloud-api'
+        }
+    }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.chuross:common-library:0.1.1'
 }
