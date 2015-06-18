@@ -1,0 +1,4 @@
+rootProject.name = 'soundcloud-api'
+
+include 'library'
+
