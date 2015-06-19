@@ -43,4 +43,12 @@ public abstract class AbstractSoundCloudResult<T> extends AbstractResult<T> {
     public boolean isInternalServerError() {
         return getStatus() == HttpURLConnection.HTTP_INTERNAL_ERROR;
     }
+
+    public boolean isServiceUnavailable() {
+        return getStatus() == HttpURLConnection.HTTP_UNAVAILABLE;
+    }
+
+    public boolean isGatewayTimeout() {
+        return getStatus() == HttpURLConnection.HTTP_GATEWAY_TIMEOUT;
+    }
 }
