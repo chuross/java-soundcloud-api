@@ -9,7 +9,9 @@ import com.chuross.common.library.rest.RestRequestBuilder;
 import com.chuross.common.library.rest.Result;
 import com.chuross.common.library.util.JsonUtils;
 import com.github.chuross.library.soundcloud.element.Track;
+import com.github.chuross.library.soundcloud.element.User;
 import com.github.chuross.library.soundcloud.result.TrackResult;
+import com.github.chuross.library.soundcloud.result.UserResult;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ListMultimap;
 import net.arnx.jsonic.TypeReference;
@@ -30,6 +32,11 @@ public class SoundCloudApiClient extends RestClient {
         this.context = context;
     }
 
+    public Observable<UserResult> getUser(final long id) {
+        return execute(Method.GET, new RestRequestBuilder(context.getUrl("users/%d", id)), UserResult.class, User.class, new TypeReference<User>() {
+        });
+    }
+
     public Observable<TrackResult> getTrack(final long id) {
         return execute(Method.GET, new RestRequestBuilder(context.getUrl("tracks/%d", id)), TrackResult.class, Track.class, new TypeReference<Track>() {
         });
@@ -47,7 +54,7 @@ public class SoundCloudApiClient extends RestClient {
                 try {
                     return getResult(resultClass, rootElementClass, typeReference, response);
                 } catch(final Exception e) {
-                    throw new IllegalStateException("create result instance failed", e);
+                    throw new IllegalStateException("instance create failed.", e);
                 }
             }
         };

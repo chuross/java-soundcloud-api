@@ -1,28 +1,33 @@
 package com.github.chuross.library.soundcloud.element;
 
+import java.util.Date;
+
 public class User {
 
     private Long id;
-    private String permalink;
     private String username;
-    private String uri;
+    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String discogsName;
+    private String country;
+    private String city;
+    private String plan;
+    private String description;
+    private String myspaceName;
+    private String permalink;
     private String permalinkUrl;
     private String avatarUrl;
-    private String country;
-    private String fullName;
-    private String city;
-    private String description;
-    private String discogsName;
-    private String myspaceName;
+    private String uri;
     private String website;
     private String websiteTitle;
     private Boolean online;
-    private Integer count;
     private Integer trackCount;
     private Integer playlistCount;
     private Integer followersCount;
     private Integer followingsCount;
     private Integer publicFavoritesCount;
+    private Date lastModified;
 
     public Long getId() {
         return id;
@@ -30,14 +35,6 @@ public class User {
 
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public String getPermalink() {
-        return permalink;
-    }
-
-    public void setPermalink(final String permalink) {
-        this.permalink = permalink;
     }
 
     public String getUsername() {
@@ -48,12 +45,84 @@ public class User {
         this.username = username;
     }
 
-    public String getUri() {
-        return uri;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setUri(final String uri) {
-        this.uri = uri;
+    public void setFullName(final String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(final String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(final String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getDiscogsName() {
+        return discogsName;
+    }
+
+    public void setDiscogsName(final String discogsName) {
+        this.discogsName = discogsName;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(final String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(final String city) {
+        this.city = city;
+    }
+
+    public String getPlan() {
+        return plan;
+    }
+
+    public void setPlan(final String plan) {
+        this.plan = plan;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public String getMyspaceName() {
+        return myspaceName;
+    }
+
+    public void setMyspaceName(final String myspaceName) {
+        this.myspaceName = myspaceName;
+    }
+
+    public String getPermalink() {
+        return permalink;
+    }
+
+    public void setPermalink(final String permalink) {
+        this.permalink = permalink;
     }
 
     public String getPermalinkUrl() {
@@ -72,52 +141,12 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getCountry() {
-        return country;
+    public String getUri() {
+        return uri;
     }
 
-    public void setCountry(final String country) {
-        this.country = country;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(final String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(final String city) {
-        this.city = city;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public String getDiscogsName() {
-        return discogsName;
-    }
-
-    public void setDiscogsName(final String discogsName) {
-        this.discogsName = discogsName;
-    }
-
-    public String getMyspaceName() {
-        return myspaceName;
-    }
-
-    public void setMyspaceName(final String myspaceName) {
-        this.myspaceName = myspaceName;
+    public void setUri(final String uri) {
+        this.uri = uri;
     }
 
     public String getWebsite() {
@@ -142,14 +171,6 @@ public class User {
 
     public void setOnline(final Boolean online) {
         this.online = online;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(final Integer count) {
-        this.count = count;
     }
 
     public Integer getTrackCount() {
@@ -190,5 +211,13 @@ public class User {
 
     public void setPublicFavoritesCount(final Integer publicFavoritesCount) {
         this.publicFavoritesCount = publicFavoritesCount;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(final Date lastModified) {
+        this.lastModified = lastModified;
     }
 }

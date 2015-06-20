@@ -1,7 +1,9 @@
 package com.github.chuross.library.soundcloud;
 
 import com.github.chuross.library.soundcloud.element.Track;
+import com.github.chuross.library.soundcloud.element.User;
 import com.github.chuross.library.soundcloud.result.TrackResult;
+import com.github.chuross.library.soundcloud.result.UserResult;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -18,6 +20,7 @@ import static org.hamcrest.core.Is.is;
 
 public class SoundCloudApiClientTest {
 
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private static final String HOST = "localhost";
     private static final int PORT = 3000;
     private MockWebServer server;
@@ -36,6 +39,42 @@ public class SoundCloudApiClientTest {
     }
 
     @Test
+    public void ユーザー情報が取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/user/success.json")));
+
+        final UserResult result = apiClient.getUser(12345L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/users/12345?client_id=test"));
+
+        final User user = result.getContent();
+        assertThat(user.getId(), is(3207L));
+        assertThat(user.getUsername(), is("Johannes Wagener"));
+        assertThat(user.getFullName(), is("Johannes Wagener"));
+        assertThat(user.getFirstName(), is("Johannes"));
+        assertThat(user.getLastName(), is("Wagener"));
+        assertThat(user.getDiscogsName(), is("discogsName"));
+        assertThat(user.getCountry(), is("Germany"));
+        assertThat(user.getCity(), is("Berlin"));
+        assertThat(user.getPlan(), is("Free"));
+        assertThat(user.getDescription(), is("description"));
+        assertThat(user.getMyspaceName(), is("myspaceName"));
+        assertThat(user.getPermalink(), is("jwagener"));
+        assertThat(user.getPermalinkUrl(), is("http://soundcloud.com/jwagener"));
+        assertThat(user.getUri(), is("https://api.soundcloud.com/users/3207"));
+        assertThat(user.getWebsite(), is("http://johannes.wagener.cc"));
+        assertThat(user.getWebsiteTitle(), is("johannes.wagener.cc"));
+        assertThat(user.isOnline(), is(true));
+        assertThat(user.getTrackCount(), is(55));
+        assertThat(user.getPlaylistCount(), is(2));
+        assertThat(user.getFollowersCount(), is(2346));
+        assertThat(user.getFollowingsCount(), is(307));
+        assertThat(user.getPublicFavoritesCount(), is(110));
+        assertThat(user.getLastModified(), is(DATE_FORMAT.parse("2014/09/09 09:00:00")));
+    }
+
+    @Test
     public void トラック情報が取得できる() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success.json")));
 
@@ -50,8 +89,8 @@ public class SoundCloudApiClientTest {
 
         final Track track = result.getContent();
         assertThat(track.getId(), is(13158665L));
-        assertThat(track.getCreatedAt(), is(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2011/04/06 09:00:00")));
-        assertThat(track.getLastModified(), is(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2013/02/18 09:00:00")));
+        assertThat(track.getCreatedAt(), is(DATE_FORMAT.parse("2011/04/06 09:00:00")));
+        assertThat(track.getLastModified(), is(DATE_FORMAT.parse("2013/02/18 09:00:00")));
         assertThat(track.getUserId(), is(3699101L));
         assertThat(track.getUser().getId(), is(3699101L));
         assertThat(track.getUser().getUsername(), is("Alex Stevenson"));
