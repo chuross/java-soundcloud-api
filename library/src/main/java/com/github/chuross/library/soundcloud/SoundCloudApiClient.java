@@ -10,7 +10,6 @@ import com.chuross.common.library.rest.Result;
 import com.chuross.common.library.util.JsonUtils;
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
-import com.github.chuross.library.soundcloud.parameter.TrackSearchFilter;
 import com.github.chuross.library.soundcloud.result.TrackResult;
 import com.github.chuross.library.soundcloud.result.TracksResult;
 import com.github.chuross.library.soundcloud.result.UserResult;
@@ -47,16 +46,22 @@ public class SoundCloudApiClient extends RestClient {
     }
 
     public Observable<TracksResult> getUserTracks(final long userId, final Long limit, final Long offset) {
-        return getUserTracks(userId, null, limit, offset);
-    }
-
-    public Observable<TracksResult> getUserTracks(final long userId, final TrackSearchFilter filter, final Long limit, final Long offset) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("users/%d/tracks", userId));
-        builder.addParameterIfNotNull("limit", limit);
-        builder.addParameterIfNotNull("offset", offset);
-        TrackSearchFilter.setFilterParameters(builder, filter);
+        setPagingParameters(builder, limit, offset);
         return execute(Method.GET, builder, TracksResult.class, List.class, new TypeReference<List<Track>>() {
         });
+    }
+
+    public Observable<TracksResult> getFavoriteTracks(final long userId, final Long limit, final Long offset) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("users/%d/favorites", userId));
+        setPagingParameters(builder, limit, offset);
+        return execute(Method.GET, builder, TracksResult.class, List.class, new TypeReference<List<Track>>() {
+        });
+    }
+
+    private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {
+        builder.addParameterIfNotNull("limit", limit);
+        builder.addParameterIfNotNull("offset", offset);
     }
 
     private <RESULT extends Result<?>, ELEMENT> Observable<RESULT> execute(final Method method, final RestRequestBuilder builder, final Class<RESULT> resultClass, final Class<?> rootElementClass, final TypeReference<ELEMENT> typeReference) {
