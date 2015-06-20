@@ -3,6 +3,7 @@ package com.github.chuross.library.soundcloud;
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
 import com.github.chuross.library.soundcloud.result.TrackResult;
+import com.github.chuross.library.soundcloud.result.TracksResult;
 import com.github.chuross.library.soundcloud.result.UserResult;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -135,6 +136,25 @@ public class SoundCloudApiClientTest {
         assertThat(track.getFavoritingsCount(), is(2));
         assertThat(track.getOriginalFormat(), is("m4a"));
         assertThat(track.getOriginalContentSize(), is(201483L));
+    }
+
+    @Test
+    public void ユーザーの投稿したトラックを取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
+
+        final TracksResult result = apiClient.getUserTracks(12345L, 1L, 2L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/users/12345/tracks?limit=1&offset=2&client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().size(), is(3));
+        assertThat(result.getContent().get(0).getId(), is(57047389L));
+        assertThat(result.getContent().get(1).getId(), is(46742486L));
+        assertThat(result.getContent().get(2).getId(), is(46699421L));
     }
 
     private String readBody(final String filePath) throws Exception {
