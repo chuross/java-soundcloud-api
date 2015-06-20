@@ -14,13 +14,14 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class SoundCloudApiClientTest {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.JAPAN);
     private static final String HOST = "localhost";
     private static final int PORT = 3000;
     private MockWebServer server;
