@@ -8,8 +8,10 @@ import com.chuross.common.library.rest.RestClient;
 import com.chuross.common.library.rest.RestRequestBuilder;
 import com.chuross.common.library.rest.Result;
 import com.chuross.common.library.util.JsonUtils;
+import com.github.chuross.library.soundcloud.element.AccessToken;
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
+import com.github.chuross.library.soundcloud.result.TokenResult;
 import com.github.chuross.library.soundcloud.result.TrackResult;
 import com.github.chuross.library.soundcloud.result.TracksResult;
 import com.github.chuross.library.soundcloud.result.UserResult;
@@ -33,6 +35,16 @@ public class SoundCloudApiClient extends RestClient {
     public SoundCloudApiClient(final RequestContext context, final HttpClient<?> client) {
         super(client);
         this.context = context;
+    }
+
+    public Observable<TokenResult> getAccessToken(final String grantType, final String code) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("oauth2/token"));
+        builder.addParameter("client_secret", context.getClientSecret());
+        builder.addParameter("grant_type", grantType);
+        builder.addParameter("redirect_uri", context.getRedirectUri());
+        builder.addParameter("code", code);
+        return execute(Method.POST, builder, TokenResult.class, AccessToken.class, new TypeReference<AccessToken>() {
+        });
     }
 
     public Observable<UserResult> getUser(final long userId) {

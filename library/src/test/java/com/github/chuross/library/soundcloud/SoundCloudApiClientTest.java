@@ -2,6 +2,7 @@ package com.github.chuross.library.soundcloud;
 
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
+import com.github.chuross.library.soundcloud.result.TokenResult;
 import com.github.chuross.library.soundcloud.result.TrackResult;
 import com.github.chuross.library.soundcloud.result.TracksResult;
 import com.github.chuross.library.soundcloud.result.UserResult;
@@ -32,12 +33,31 @@ public class SoundCloudApiClientTest {
     public void before() throws Exception {
         server = new MockWebServer();
         server.start(InetAddress.getByName(HOST), 3000);
-        apiClient = new SoundCloudApiClient(new MockRequestContext(String.format("http://%s:%d", HOST, PORT)));
+        final RequestContext context = new MockRequestContext(String.format("http://%s:%d", HOST, PORT));
+        context.setRedirectUri("http://hoge/fuga");
+        apiClient = new SoundCloudApiClient(context);
     }
 
     @After
     public void after() throws Exception {
         server.shutdown();
+    }
+
+    @Test
+    public void アクセストークンが取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/oauth2/success.json")));
+
+        final TokenResult result = apiClient.getAccessToken("authorization_code", "hogeHogeCode").toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("POST"));
+        assertThat(request.getPath(), is("/oauth2/token"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().getAccessToken(), is("04u7h-4cc355-70k3n"));
+        assertThat(result.getContent().getScope(), is("non-expiring"));
     }
 
     @Test

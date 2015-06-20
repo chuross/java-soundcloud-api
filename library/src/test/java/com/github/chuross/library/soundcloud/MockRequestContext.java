@@ -5,7 +5,7 @@ public class MockRequestContext extends RequestContext {
     private String baseUrl;
 
     public MockRequestContext(final String baseUrl) {
-        super("test");
+        super("test", "secret");
         this.baseUrl = baseUrl;
     }
 
