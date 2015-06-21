@@ -16,6 +16,15 @@ public abstract class AbstractSoundCloudResult<T> extends AbstractResult<T> {
         super(status, responseHeaders, content);
     }
 
+    @Override
+    public boolean isSuccess() {
+        return !hasError() && getContent() != null;
+    }
+
+    public boolean hasError() {
+        return isBadRequest() || isUnauthorized() || isForbidden() || isNotAccesible() || isUnprocessableEntity() || isTooManyRequests() || isInternalServerError() || isServiceUnavailable() || isGatewayTimeout();
+    }
+
     public boolean isBadRequest() {
         return getStatus() == HttpURLConnection.HTTP_BAD_REQUEST;
     }
