@@ -51,7 +51,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("POST"));
-        assertThat(request.getPath(), is("/oauth2/token"));
+        assertThat(request.getPath(), is("/oauth2/token.json"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -68,7 +68,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/users/12345?client_id=test"));
+        assertThat(request.getPath(), is("/users/12345.json?client_id=test"));
 
         final User user = result.getContent();
         assertThat(user.getId(), is(3207L));
@@ -104,7 +104,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/tracks/12345?client_id=test"));
+        assertThat(request.getPath(), is("/tracks/12345.json?client_id=test"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -166,7 +166,27 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/users/12345/tracks?limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/users/12345/tracks.json?limit=1&offset=2&client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().size(), is(3));
+        assertThat(result.getContent().get(0).getId(), is(57047389L));
+        assertThat(result.getContent().get(1).getId(), is(46742486L));
+        assertThat(result.getContent().get(2).getId(), is(46699421L));
+    }
+
+    @Test
+    public void ログインユーザーのお気に入り一覧を取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
+
+        final TracksResult result = apiClient.getFavoriteTracks("access-token", 1L, 2L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/me/favorites.json?limit=1&offset=2&client_id=test"));
+        assertThat(request.getHeader("Authorization"), is("OAuth access-token"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -185,7 +205,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/users/12345/favorites?limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/users/12345/favorites.json?limit=1&offset=2&client_id=test"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));

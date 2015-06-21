@@ -1,6 +1,7 @@
 package com.github.chuross.library.soundcloud;
 
 import com.chuross.common.library.http.DefaultHttpClient;
+import com.chuross.common.library.http.HeaderElement;
 import com.chuross.common.library.http.HttpClient;
 import com.chuross.common.library.http.Response;
 import com.chuross.common.library.rest.Method;
@@ -38,7 +39,7 @@ public class SoundCloudApiClient extends RestClient {
     }
 
     public Observable<TokenResult> getAccessToken(final String grantType, final String code) {
-        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("oauth2/token"));
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("oauth2/token.json"));
         builder.addParameter("client_secret", context.getClientSecret());
         builder.addParameter("grant_type", grantType);
         builder.addParameter("redirect_uri", context.getRedirectUri());
@@ -48,24 +49,32 @@ public class SoundCloudApiClient extends RestClient {
     }
 
     public Observable<UserResult> getUser(final long userId) {
-        return execute(Method.GET, new RestRequestBuilder(context.getUrl("users/%d", userId)), UserResult.class, User.class, new TypeReference<User>() {
+        return execute(Method.GET, new RestRequestBuilder(context.getUrl("users/%d.json", userId)), UserResult.class, User.class, new TypeReference<User>() {
         });
     }
 
     public Observable<TrackResult> getTrack(final long trackId) {
-        return execute(Method.GET, new RestRequestBuilder(context.getUrl("tracks/%d", trackId)), TrackResult.class, Track.class, new TypeReference<Track>() {
+        return execute(Method.GET, new RestRequestBuilder(context.getUrl("tracks/%d.json", trackId)), TrackResult.class, Track.class, new TypeReference<Track>() {
         });
     }
 
     public Observable<TracksResult> getUserTracks(final long userId, final Long limit, final Long offset) {
-        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("users/%d/tracks", userId));
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("users/%d/tracks.json", userId));
+        setPagingParameters(builder, limit, offset);
+        return execute(Method.GET, builder, TracksResult.class, List.class, new TypeReference<List<Track>>() {
+        });
+    }
+
+    public Observable<TracksResult> getFavoriteTracks(final String acccessToken, final Long limit, final Long offset) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites.json"));
+        setAccessToken(builder, acccessToken);
         setPagingParameters(builder, limit, offset);
         return execute(Method.GET, builder, TracksResult.class, List.class, new TypeReference<List<Track>>() {
         });
     }
 
     public Observable<TracksResult> getFavoriteTracks(final long userId, final Long limit, final Long offset) {
-        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("users/%d/favorites", userId));
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("users/%d/favorites.json", userId));
         setPagingParameters(builder, limit, offset);
         return execute(Method.GET, builder, TracksResult.class, List.class, new TypeReference<List<Track>>() {
         });
@@ -74,6 +83,10 @@ public class SoundCloudApiClient extends RestClient {
     private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {
         builder.addParameterIfNotNull("limit", limit);
         builder.addParameterIfNotNull("offset", offset);
+    }
+
+    private static void setAccessToken(final RestRequestBuilder builder, final String acccessToken) {
+        builder.addRequestHeader("Authorization", HeaderElement.of("OAuth " + acccessToken));
     }
 
     private <RESULT extends Result<?>, ELEMENT> Observable<RESULT> execute(final Method method, final RestRequestBuilder builder, final Class<RESULT> resultClass, final Class<?> rootElementClass, final TypeReference<ELEMENT> typeReference) {
