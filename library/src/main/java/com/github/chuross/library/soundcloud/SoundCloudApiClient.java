@@ -88,7 +88,7 @@ public class SoundCloudApiClient extends RestClient {
     public Observable<StatusResult> putFavoriteTrack(final String accessToken, final long trackId) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites/%d.json", trackId));
         setAccessToken(builder, accessToken);
-        return execute(Method.PUT, builder, StatusResult.class, Status.class);
+        return execute(Method.PUT, builder, StatusResult.class, Status.class, null);
     }
 
     private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {
@@ -100,27 +100,13 @@ public class SoundCloudApiClient extends RestClient {
         builder.addRequestHeader("Authorization", HeaderElement.of("OAuth " + accessToken));
     }
 
-    private <RESULT extends Result<?>, ELEMENT> Observable<RESULT> execute(final Method method, final RestRequestBuilder builder, final Class<RESULT> resultClass, final Class<ELEMENT> rootElementClass) {
-        builder.addParameter("client_id", context.getClientId());
-        return execute(method, builder.build(), getDecodeFunction(resultClass, rootElementClass));
+    private <RESULT extends Result<?>> Observable<RESULT> execute(final Method method, final RestRequestBuilder builder, final Class<RESULT> resultClass, final Class<?> rootElementClass) {
+        return execute(method, builder, resultClass, rootElementClass, null);
     }
 
     private <RESULT extends Result<?>, ELEMENT> Observable<RESULT> execute(final Method method, final RestRequestBuilder builder, final Class<RESULT> resultClass, final Class<?> rootElementClass, final TypeReference<ELEMENT> typeReference) {
         builder.addParameter("client_id", context.getClientId());
         return execute(method, builder.build(), getDecodeFunction(resultClass, rootElementClass, typeReference));
-    }
-
-    private static <RESULT extends Result<?>, ELEMENT> Func1<Response, RESULT> getDecodeFunction(final Class<RESULT> resultClass, final Class<ELEMENT> rootElementClass) {
-        return new Func1<Response, RESULT>() {
-            @Override
-            public RESULT call(final Response response) {
-                try {
-                    return getResult(resultClass, rootElementClass, response);
-                } catch(final Exception e) {
-                    throw new IllegalStateException("instance create failed.", e);
-                }
-            }
-        };
     }
 
     private static <RESULT extends Result<?>, ELEMENT> Func1<Response, RESULT> getDecodeFunction(final Class<RESULT> resultClass, final Class<?> rootElementClass, final TypeReference<ELEMENT> typeReference) {
@@ -136,19 +122,17 @@ public class SoundCloudApiClient extends RestClient {
         };
     }
 
-    private static <RESULT extends Result<?>, ELEMENT> RESULT getResult(final Class<RESULT> resultClass, final Class<ELEMENT> rootElementClass, final Response response) throws Exception {
-        if(response.getData() == null) {
-            return resultClass.getConstructor(int.class, ListMultimap.class, rootElementClass).newInstance(response.getStatus(), response.getHeaders(), null);
-        }
-        final ELEMENT element = JsonUtils.decode(StringUtils.toEncodedString(response.getData(), Charsets.UTF_8), rootElementClass);
+    private static <RESULT extends Result<?>, ELEMENT> RESULT getResult(final Class<RESULT> resultClass, final Class<?> rootElementClass, final TypeReference<ELEMENT> typeReference, final Response response) throws Exception {
+        final ELEMENT element = response.getData() != null ? getElement(rootElementClass, response, typeReference) : null;
         return resultClass.getConstructor(int.class, ListMultimap.class, rootElementClass).newInstance(response.getStatus(), response.getHeaders(), element);
     }
 
-    private static <RESULT extends Result<?>, ELEMENT> RESULT getResult(final Class<RESULT> resultClass, final Class<?> rootElementClass, final TypeReference<ELEMENT> typeReference, final Response response) throws Exception {
-        if(response.getData() == null) {
-            return resultClass.getConstructor(int.class, ListMultimap.class, rootElementClass).newInstance(response.getStatus(), response.getHeaders(), null);
+    @SuppressWarnings("unchecked")
+    private static <ELEMENT> ELEMENT getElement(final Class<?> rootElementClass, final Response response, final TypeReference<ELEMENT> typeReference) {
+        if(typeReference != null) {
+            return JsonUtils.decode(StringUtils.toEncodedString(response.getData(), Charsets.UTF_8), typeReference);
+        } else {
+            return JsonUtils.decode(StringUtils.toEncodedString(response.getData(), Charsets.UTF_8), (Class<ELEMENT>) rootElementClass);
         }
-        final ELEMENT element = JsonUtils.decode(StringUtils.toEncodedString(response.getData(), Charsets.UTF_8), typeReference);
-        return resultClass.getConstructor(int.class, ListMultimap.class, rootElementClass).newInstance(response.getStatus(), response.getHeaders(), element);
     }
 }
