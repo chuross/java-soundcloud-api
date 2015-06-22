@@ -25,6 +25,14 @@ public abstract class AbstractSoundCloudResult<T> extends AbstractResult<T> {
         return isBadRequest() || isUnauthorized() || isForbidden() || isNotAccesible() || isUnprocessableEntity() || isTooManyRequests() || isInternalServerError() || isServiceUnavailable() || isGatewayTimeout();
     }
 
+    public boolean isOK() {
+        return getStatus() == HttpURLConnection.HTTP_OK;
+    }
+
+    public boolean isCreated() {
+        return getStatus() == HttpURLConnection.HTTP_CREATED;
+    }
+
     public boolean isBadRequest() {
         return getStatus() == HttpURLConnection.HTTP_BAD_REQUEST;
     }

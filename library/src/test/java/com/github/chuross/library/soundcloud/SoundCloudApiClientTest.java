@@ -2,11 +2,8 @@ package com.github.chuross.library.soundcloud;
 
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
-import com.github.chuross.library.soundcloud.parameter.TrackSerchFilterBuilder;
-import com.github.chuross.library.soundcloud.result.TokenResult;
-import com.github.chuross.library.soundcloud.result.TrackResult;
-import com.github.chuross.library.soundcloud.result.TracksResult;
-import com.github.chuross.library.soundcloud.result.UserResult;
+import com.github.chuross.library.soundcloud.parameter.TrackSearchFilterBuilder;
+import com.github.chuross.library.soundcloud.result.*;
 import com.google.common.collect.Lists;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -165,7 +162,7 @@ public class SoundCloudApiClientTest {
     public void トラック情報の一覧を取得できる() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
 
-        final TrackSerchFilterBuilder builder = new TrackSerchFilterBuilder();
+        final TrackSearchFilterBuilder builder = new TrackSearchFilterBuilder();
         builder.setQuery("query");
         builder.setTags(Lists.newArrayList("tagA", "tagB"));
         builder.setFilter("filter");
@@ -251,6 +248,22 @@ public class SoundCloudApiClientTest {
         assertThat(result.getContent().get(0).getId(), is(57047389L));
         assertThat(result.getContent().get(1).getId(), is(46742486L));
         assertThat(result.getContent().get(2).getId(), is(46699421L));
+    }
+
+    @Test
+    public void ログインユーザーのお気に入りを追加できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(201).setBody(readBody("/status/success.json")));
+
+        final StatusResult result = apiClient.putFavoriteTrack("access-token", 12345L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("PUT"));
+        assertThat(request.getPath(), is("/me/favorites/12345.json"));
+        assertThat(request.getHeader("Authorization"), is("OAuth access-token"));
+
+        assertThat(result.getStatus(), is(201));
+        assertThat(result.isSuccess(), is(true));
+        assertThat(result.getContent().getStatus(), is("201 - Created"));
     }
 
     private String readBody(final String filePath) throws Exception {

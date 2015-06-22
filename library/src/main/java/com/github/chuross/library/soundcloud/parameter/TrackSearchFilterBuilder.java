@@ -5,75 +5,75 @@ import org.apache.commons.lang3.SerializationUtils;
 import java.util.Date;
 import java.util.List;
 
-public class TrackSerchFilterBuilder {
+public class TrackSearchFilterBuilder {
 
     private TrackSearchFilter filter;
 
-    public TrackSerchFilterBuilder() {
+    public TrackSearchFilterBuilder() {
         filter = new TrackSearchFilter();
     }
 
-    public TrackSerchFilterBuilder setQuery(final String query) {
+    public TrackSearchFilterBuilder setQuery(final String query) {
         filter.setQuery(query);
         return this;
     }
 
-    public TrackSerchFilterBuilder setTags(final List<String> tags) {
+    public TrackSearchFilterBuilder setTags(final List<String> tags) {
         filter.setTags(tags);
         return this;
     }
 
-    public TrackSerchFilterBuilder setFilter(final String filter) {
+    public TrackSearchFilterBuilder setFilter(final String filter) {
         this.filter.setFilter(filter);
         return this;
     }
 
-    public TrackSerchFilterBuilder setLicense(final String license) {
+    public TrackSearchFilterBuilder setLicense(final String license) {
         filter.setLicense(license);
         return this;
     }
 
-    public TrackSerchFilterBuilder setBpmFrom(final Integer bpmFrom) {
+    public TrackSearchFilterBuilder setBpmFrom(final Integer bpmFrom) {
         filter.setBpmFrom(bpmFrom);
         return this;
     }
 
-    public TrackSerchFilterBuilder setBpmTo(final Integer bpmTo) {
+    public TrackSearchFilterBuilder setBpmTo(final Integer bpmTo) {
         filter.setBpmTo(bpmTo);
         return this;
     }
 
-    public TrackSerchFilterBuilder setDurationFrom(final Integer durationFrom) {
+    public TrackSearchFilterBuilder setDurationFrom(final Integer durationFrom) {
         filter.setDurationFrom(durationFrom);
         return this;
     }
 
-    public TrackSerchFilterBuilder setDurationTo(final Integer durationTo) {
+    public TrackSearchFilterBuilder setDurationTo(final Integer durationTo) {
         filter.setDurationTo(durationTo);
         return this;
     }
 
-    public TrackSerchFilterBuilder setCreatedAtFrom(final Date createdAtFrom) {
+    public TrackSearchFilterBuilder setCreatedAtFrom(final Date createdAtFrom) {
         filter.setCreatedAtFrom(createdAtFrom);
         return this;
     }
 
-    public TrackSerchFilterBuilder setCreatedAtTo(final Date createdAtTo) {
+    public TrackSearchFilterBuilder setCreatedAtTo(final Date createdAtTo) {
         filter.setCreatedAtTo(createdAtTo);
         return this;
     }
 
-    public TrackSerchFilterBuilder setIds(final List<Long> ids) {
+    public TrackSearchFilterBuilder setIds(final List<Long> ids) {
         filter.setIds(ids);
         return this;
     }
 
-    public TrackSerchFilterBuilder setGenres(final List<String> genres) {
+    public TrackSearchFilterBuilder setGenres(final List<String> genres) {
         filter.setGenres(genres);
         return this;
     }
 
-    public TrackSerchFilterBuilder setTypes(final List<String> types) {
+    public TrackSearchFilterBuilder setTypes(final List<String> types) {
         filter.setTypes(types);
         return this;
     }
