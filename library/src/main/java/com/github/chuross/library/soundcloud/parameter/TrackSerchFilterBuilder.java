@@ -58,7 +58,7 @@ public class TrackSerchFilterBuilder {
         return this;
     }
 
-    public TrackSerchFilterBuilder setGetCreatedAtTo(final Date createdAtTo) {
+    public TrackSerchFilterBuilder setCreatedAtTo(final Date createdAtTo) {
         filter.setCreatedAtTo(createdAtTo);
         return this;
     }

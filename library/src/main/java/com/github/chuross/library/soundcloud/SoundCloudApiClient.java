@@ -12,6 +12,7 @@ import com.chuross.common.library.util.JsonUtils;
 import com.github.chuross.library.soundcloud.element.AccessToken;
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
+import com.github.chuross.library.soundcloud.parameter.TrackSearchFilter;
 import com.github.chuross.library.soundcloud.result.TokenResult;
 import com.github.chuross.library.soundcloud.result.TrackResult;
 import com.github.chuross.library.soundcloud.result.TracksResult;
@@ -55,6 +56,14 @@ public class SoundCloudApiClient extends RestClient {
 
     public Observable<TrackResult> getTrack(final long trackId) {
         return execute(Method.GET, new RestRequestBuilder(context.getUrl("tracks/%d.json", trackId)), TrackResult.class, Track.class, new TypeReference<Track>() {
+        });
+    }
+
+    public Observable<TracksResult> getTracks(final TrackSearchFilter filter, final Long limit, final Long offset) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("tracks.json"));
+        TrackSearchFilter.setParameters(builder, filter);
+        setPagingParameters(builder, limit, offset);
+        return execute(Method.GET, builder, TracksResult.class, List.class, new TypeReference<List<Track>>() {
         });
     }
 

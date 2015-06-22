@@ -7,10 +7,11 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class TrackSearchFilter implements Serializable {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String query;
     private List<String> tags;
     private String filter;
@@ -24,6 +25,10 @@ public class TrackSearchFilter implements Serializable {
     private List<Long> ids;
     private List<String> genres;
     private List<String> types;
+
+    static {
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     TrackSearchFilter() {
     }
@@ -132,13 +137,14 @@ public class TrackSearchFilter implements Serializable {
         this.types = types;
     }
 
-    public static void setFilterParameters(final RestRequestBuilder builder, final TrackSearchFilter filter) {
+    public static void setParameters(final RestRequestBuilder builder, final TrackSearchFilter filter) {
         if(builder == null || filter == null) {
             return;
         }
+        final Joiner joiner = Joiner.on(",");
         builder.addParameterIfNotNull("q", filter.getQuery());
         if(filter.getTags() != null && !filter.getTags().isEmpty()) {
-            builder.addParameter("tags", Joiner.on(",").join(filter.getTags()));
+            builder.addParameter("tags", joiner.join(filter.getTags()));
         }
         builder.addParameterIfNotNull("filter", filter.getFilter());
         builder.addParameterIfNotNull("license", filter.getLicense());
@@ -153,10 +159,13 @@ public class TrackSearchFilter implements Serializable {
             builder.addParameter("created_at[to]", DATE_FORMAT.format(filter.getCreatedAtTo()));
         }
         if(filter.getIds() != null && !filter.getIds().isEmpty()) {
-            builder.addParameter("ids", Joiner.on(",").join(filter.getIds()));
+            builder.addParameter("ids", joiner.join(filter.getIds()));
+        }
+        if(filter.getGenres() != null && !filter.getGenres().isEmpty()) {
+            builder.addParameter("genres", joiner.join(filter.getGenres()));
         }
         if(filter.getTypes() != null && !filter.getTypes().isEmpty()) {
-            builder.addParameter("types", Joiner.on(",").join(filter.getTypes()));
+            builder.addParameter("types", joiner.join(filter.getTypes()));
         }
     }
 }

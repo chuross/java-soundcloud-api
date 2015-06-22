@@ -2,10 +2,12 @@ package com.github.chuross.library.soundcloud;
 
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
+import com.github.chuross.library.soundcloud.parameter.TrackSerchFilterBuilder;
 import com.github.chuross.library.soundcloud.result.TokenResult;
 import com.github.chuross.library.soundcloud.result.TrackResult;
 import com.github.chuross.library.soundcloud.result.TracksResult;
 import com.github.chuross.library.soundcloud.result.UserResult;
+import com.google.common.collect.Lists;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -16,6 +18,7 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -156,6 +159,40 @@ public class SoundCloudApiClientTest {
         assertThat(track.getFavoritingsCount(), is(2));
         assertThat(track.getOriginalFormat(), is("m4a"));
         assertThat(track.getOriginalContentSize(), is(201483L));
+    }
+
+    @Test
+    public void トラック情報の一覧を取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
+
+        final TrackSerchFilterBuilder builder = new TrackSerchFilterBuilder();
+        builder.setQuery("query");
+        builder.setTags(Lists.newArrayList("tagA", "tagB"));
+        builder.setFilter("filter");
+        builder.setLicense("license");
+        builder.setBpmFrom(10);
+        builder.setBpmTo(20);
+        builder.setDurationFrom(30);
+        builder.setDurationTo(40);
+        builder.setCreatedAtFrom(new Date(1000));
+        builder.setCreatedAtTo(new Date(2000));
+        builder.setIds(Lists.newArrayList(1L, 2L, 3L));
+        builder.setGenres(Lists.newArrayList("g1", "g2"));
+        builder.setTypes(Lists.newArrayList("type1", "type2"));
+
+        final TracksResult result = apiClient.getTracks(builder.build(), 1L, 2L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/tracks.json?q=query&tags=tagA,tagB&filter=filter&license=license&bpm[from]=10&bpm[to]=20&duration[from]=30&duration[to]=40&created_at[from]=1970-01-01%2000:00:01&created_at[to]=1970-01-01%2000:00:02&ids=1,2,3&genres=g1,g2&types=type1,type2&limit=1&offset=2&client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().size(), is(3));
+        assertThat(result.getContent().get(0).getId(), is(57047389L));
+        assertThat(result.getContent().get(1).getId(), is(46742486L));
+        assertThat(result.getContent().get(2).getId(), is(46699421L));
     }
 
     @Test
