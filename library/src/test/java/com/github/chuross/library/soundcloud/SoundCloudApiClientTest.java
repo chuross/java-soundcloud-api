@@ -252,7 +252,7 @@ public class SoundCloudApiClientTest {
 
     @Test
     public void ログインユーザーのお気に入りを追加できる() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(201).setBody(readBody("/status/success.json")));
+        server.enqueue(new MockResponse().setResponseCode(201).setBody(readBody("/status/success_created.json")));
 
         final StatusResult result = apiClient.putFavoriteTrack("access-token", 12345L).toBlocking().single();
 
@@ -264,6 +264,22 @@ public class SoundCloudApiClientTest {
         assertThat(result.getStatus(), is(201));
         assertThat(result.isSuccess(), is(true));
         assertThat(result.getContent().getStatus(), is("201 - Created"));
+    }
+
+    @Test
+    public void ログインユーザーのお気に入りを削除できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/status/success_ok.json")));
+
+        final StatusResult result = apiClient.deleteFavoriteTrack("access-token", 12345L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("DELETE"));
+        assertThat(request.getPath(), is("/me/favorites/12345.json?client_id=test"));
+        assertThat(request.getHeader("Authorization"), is("OAuth access-token"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+        assertThat(result.getContent().getStatus(), is("200 - OK"));
     }
 
     private String readBody(final String filePath) throws Exception {

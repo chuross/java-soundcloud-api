@@ -88,7 +88,13 @@ public class SoundCloudApiClient extends RestClient {
     public Observable<StatusResult> putFavoriteTrack(final String accessToken, final long trackId) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites/%d.json", trackId));
         setAccessToken(builder, accessToken);
-        return execute(Method.PUT, builder, StatusResult.class, Status.class, null);
+        return execute(Method.PUT, builder, StatusResult.class, Status.class);
+    }
+
+    public Observable<StatusResult> deleteFavoriteTrack(final String accessToken, final long trackId) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites/%d.json", trackId));
+        setAccessToken(builder, accessToken);
+        return execute(Method.DELETE, builder, StatusResult.class, Status.class);
     }
 
     private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {
