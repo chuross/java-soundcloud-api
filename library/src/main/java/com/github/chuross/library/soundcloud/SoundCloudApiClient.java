@@ -9,10 +9,7 @@ import com.chuross.common.library.rest.RestClient;
 import com.chuross.common.library.rest.RestRequestBuilder;
 import com.chuross.common.library.rest.Result;
 import com.chuross.common.library.util.JsonUtils;
-import com.github.chuross.library.soundcloud.element.AccessToken;
-import com.github.chuross.library.soundcloud.element.Status;
-import com.github.chuross.library.soundcloud.element.Track;
-import com.github.chuross.library.soundcloud.element.User;
+import com.github.chuross.library.soundcloud.element.*;
 import com.github.chuross.library.soundcloud.parameter.TrackSearchFilter;
 import com.github.chuross.library.soundcloud.result.*;
 import com.google.common.base.Charsets;
@@ -95,6 +92,10 @@ public class SoundCloudApiClient extends RestClient {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites/%d.json", trackId));
         setAccessToken(builder, accessToken);
         return execute(Method.DELETE, builder, StatusResult.class, Status.class);
+    }
+
+    public Observable<PlaylistResult> getPlaylist(final long playlistId) {
+        return execute(Method.GET, new RestRequestBuilder(context.getUrl("playlists/%d.json", playlistId)), PlaylistResult.class, Playlist.class);
     }
 
     private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {

@@ -1,5 +1,6 @@
 package com.github.chuross.library.soundcloud;
 
+import com.github.chuross.library.soundcloud.element.Playlist;
 import com.github.chuross.library.soundcloud.element.Track;
 import com.github.chuross.library.soundcloud.element.User;
 import com.github.chuross.library.soundcloud.parameter.TrackSearchFilterBuilder;
@@ -280,6 +281,63 @@ public class SoundCloudApiClientTest {
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
         assertThat(result.getContent().getStatus(), is("200 - OK"));
+    }
+
+    @Test
+    public void プレイリストを取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/playlist/success.json")));
+
+        final PlaylistResult result = apiClient.getPlaylist(12345L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/playlists/12345.json?client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        final Playlist playlist = result.getContent();
+        assertThat(playlist.getId(), is(405726L));
+        assertThat(playlist.getCreatedAt(), is(DATE_FORMAT.parse("2010/11/02 09:00:00")));
+        assertThat(playlist.getLastModified(), is(DATE_FORMAT.parse("2012/06/28 09:00:00")));
+        assertThat(playlist.getUserId(), is(3207L));
+        assertThat(playlist.getUser().getId(), is(3207L));
+        assertThat(playlist.getUser().getUsername(), is("Johannes Wagener"));
+        assertThat(playlist.getUser().getPermalink(), is("jwagener"));
+        assertThat(playlist.getUser().getPermalinkUrl(), is("http://soundcloud.com/jwagener"));
+        assertThat(playlist.getUser().getUri(), is("https://api.soundcloud.com/users/3207"));
+        assertThat(playlist.getTitle(), is("Field Recordings"));
+        assertThat(playlist.getPermalink(), is("field-recordings"));
+        assertThat(playlist.getPermalinkUrl(), is("http://soundcloud.com/jwagener/sets/field-recordings"));
+        assertThat(playlist.getUri(), is("https://api.soundcloud.com/playlists/405726"));
+        assertThat(playlist.getSharing(), is("public"));
+        assertThat(playlist.getEmbeddableBy(), is("me"));
+        assertThat(playlist.getPurchaseTitle(), is("purchaseTitle"));
+        assertThat(playlist.getPurchaseUrl(), is("http://purchase"));
+        assertThat(playlist.getArtworkUrl(), is("https://i1.sndcdn.com/artworks-000025801802-1msl1i-large.jpg"));
+        assertThat(playlist.getDescription(), is("a couple of field recordings to test http://soundiverse.com."));
+        assertThat(playlist.getLabelId(), is(12345L));
+        assertThat(playlist.getLabelName(), is("hoge"));
+        assertThat(playlist.getDuration(), is(154516L));
+        assertThat(playlist.getGenre(), is("genre"));
+        assertThat(playlist.getLicense(), is("all-rights-reserved"));
+        assertThat(playlist.getTagList(), is("tagA \"tag B\" tagC"));
+        assertThat(playlist.getTrackCount(), is(5));
+        assertThat(playlist.getRelease(), is("12345"));
+        assertThat(playlist.getReleaseDay(), is(15));
+        assertThat(playlist.getReleaseMonth(), is(1));
+        assertThat(playlist.getReleaseYear(), is(2004));
+        assertThat(playlist.getSharing(), is("public"));
+        assertThat(playlist.isStreamable(), is(true));
+        assertThat(playlist.isDownloadable(), is(true));
+        assertThat(playlist.getEan(), is("ean"));
+        assertThat(playlist.getPlaylistType(), is("other"));
+        assertThat(playlist.getTracks().size(), is(5));
+        assertThat(playlist.getTracks().get(0).getId(), is(6621631L));
+        assertThat(playlist.getTracks().get(1).getId(), is(6621549L));
+        assertThat(playlist.getTracks().get(2).getId(), is(6668072L));
+        assertThat(playlist.getTracks().get(3).getId(), is(6698933L));
+        assertThat(playlist.getTracks().get(4).getId(), is(6770077L));
     }
 
     private String readBody(final String filePath) throws Exception {
