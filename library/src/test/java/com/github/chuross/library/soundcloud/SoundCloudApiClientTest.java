@@ -344,11 +344,11 @@ public class SoundCloudApiClientTest {
     public void プレイリストの一覧を取得できる() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
 
-        final PlaylistsResult result = apiClient.getPlaylists("hoge", "id", 1L, 2L).toBlocking().single();
+        final PlaylistsResult result = apiClient.getPlaylists("hoge", 1L, 2L).toBlocking().single();
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/playlists.json?q=hoge&representation=id&limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/playlists.json?q=hoge&limit=1&offset=2&client_id=test"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));

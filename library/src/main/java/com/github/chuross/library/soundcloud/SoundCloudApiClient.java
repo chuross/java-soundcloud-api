@@ -102,10 +102,9 @@ public class SoundCloudApiClient extends RestClient {
         return execute(Method.GET, new RestRequestBuilder(context.getUrl("playlists/%d.json", playlistId)), PlaylistResult.class, Playlist.class);
     }
 
-    public Observable<PlaylistsResult> getPlaylists(final String query, final String representation, final Long limit, final Long offset) {
+    public Observable<PlaylistsResult> getPlaylists(final String query, final Long limit, final Long offset) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("playlists.json"));
         builder.addParameterIfNotNull("q", query);
-        builder.addParameterIfNotNull("representation", representation);
         setPagingParameters(builder, limit, offset);
         return execute(Method.GET, builder, PlaylistsResult.class, List.class, new TypeReference<List<Playlist>>() {
         });
