@@ -216,7 +216,7 @@ public class SoundCloudApiClientTest {
     public void ログインユーザーのお気に入り一覧を取得できる() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
 
-        final TracksResult result = apiClient.getFavoriteTracks("access-token", 1L, 2L).toBlocking().single();
+        final TracksResult result = apiClient.getUserFavoriteTracks("access-token", 1L, 2L).toBlocking().single();
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
@@ -236,7 +236,7 @@ public class SoundCloudApiClientTest {
     public void ユーザーのお気に入り一覧を取得できる() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
 
-        final TracksResult result = apiClient.getFavoriteTracks(12345L, 1L, 2L).toBlocking().single();
+        final TracksResult result = apiClient.getUserFavoriteTracks(12345L, 1L, 2L).toBlocking().single();
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
@@ -255,7 +255,7 @@ public class SoundCloudApiClientTest {
     public void ログインユーザーのお気に入りを追加できる() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(201).setBody(readBody("/status/success_created.json")));
 
-        final StatusResult result = apiClient.putFavoriteTrack("access-token", 12345L).toBlocking().single();
+        final StatusResult result = apiClient.putUserFavoriteTrack("access-token", 12345L).toBlocking().single();
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("PUT"));
@@ -271,7 +271,7 @@ public class SoundCloudApiClientTest {
     public void ログインユーザーのお気に入りを削除できる() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/status/success_ok.json")));
 
-        final StatusResult result = apiClient.deleteFavoriteTrack("access-token", 12345L).toBlocking().single();
+        final StatusResult result = apiClient.deleteUserFavoriteTrack("access-token", 12345L).toBlocking().single();
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("DELETE"));
@@ -349,6 +349,26 @@ public class SoundCloudApiClientTest {
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
         assertThat(request.getPath(), is("/playlists.json?q=hoge&limit=1&offset=2&client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().size(), is(3));
+        assertThat(result.getContent().get(0).getId(), is(57047389L));
+        assertThat(result.getContent().get(1).getId(), is(46742486L));
+        assertThat(result.getContent().get(2).getId(), is(46699421L));
+    }
+
+    @Test
+    public void ログインユーザーのプレイリスト一覧を取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
+
+        final PlaylistsResult result = apiClient.getUserPlaylists("access-token", 1L, 2L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/me/playlists.json?limit=1&offset=2&client_id=test"));
+        assertThat(request.getHeader("Authorization"), is("OAuth access-token"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));

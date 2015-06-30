@@ -71,7 +71,7 @@ public class SoundCloudApiClient extends RestClient {
         });
     }
 
-    public Observable<TracksResult> getFavoriteTracks(final String accessToken, final Long limit, final Long offset) {
+    public Observable<TracksResult> getUserFavoriteTracks(final String accessToken, final Long limit, final Long offset) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites.json"));
         setAccessToken(builder, accessToken);
         setPagingParameters(builder, limit, offset);
@@ -79,20 +79,20 @@ public class SoundCloudApiClient extends RestClient {
         });
     }
 
-    public Observable<TracksResult> getFavoriteTracks(final long userId, final Long limit, final Long offset) {
+    public Observable<TracksResult> getUserFavoriteTracks(final long userId, final Long limit, final Long offset) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("users/%d/favorites.json", userId));
         setPagingParameters(builder, limit, offset);
         return execute(Method.GET, builder, TracksResult.class, List.class, new TypeReference<List<Track>>() {
         });
     }
 
-    public Observable<StatusResult> putFavoriteTrack(final String accessToken, final long trackId) {
+    public Observable<StatusResult> putUserFavoriteTrack(final String accessToken, final long trackId) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites/%d.json", trackId));
         setAccessToken(builder, accessToken);
         return execute(Method.PUT, builder, StatusResult.class, Status.class);
     }
 
-    public Observable<StatusResult> deleteFavoriteTrack(final String accessToken, final long trackId) {
+    public Observable<StatusResult> deleteUserFavoriteTrack(final String accessToken, final long trackId) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/favorites/%d.json", trackId));
         setAccessToken(builder, accessToken);
         return execute(Method.DELETE, builder, StatusResult.class, Status.class);
@@ -105,6 +105,14 @@ public class SoundCloudApiClient extends RestClient {
     public Observable<PlaylistsResult> getPlaylists(final String query, final Long limit, final Long offset) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("playlists.json"));
         builder.addParameterIfNotNull("q", query);
+        setPagingParameters(builder, limit, offset);
+        return execute(Method.GET, builder, PlaylistsResult.class, List.class, new TypeReference<List<Playlist>>() {
+        });
+    }
+
+    public Observable<PlaylistsResult> getUserPlaylists(final String accessToken, final Long limit, final Long offset) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/playlists.json"));
+        setAccessToken(builder, accessToken);
         setPagingParameters(builder, limit, offset);
         return execute(Method.GET, builder, PlaylistsResult.class, List.class, new TypeReference<List<Playlist>>() {
         });
