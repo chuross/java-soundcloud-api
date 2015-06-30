@@ -130,7 +130,7 @@ public class SoundCloudApiClient extends RestClient {
     }
 
     public Observable<PlaylistResult> addUserPlaylist(final String accessToken, final String title, final String sharing, final List<Long> ids) {
-        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("playlists.json"));
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/playlists.json"));
         setAccessToken(builder, accessToken);
         builder.addParameter("playlist[title]", title);
         builder.addParameterIfNotNull("playlist[sharing]", sharing);
@@ -140,6 +140,12 @@ public class SoundCloudApiClient extends RestClient {
             }
         }
         return execute(Method.POST, builder, PlaylistResult.class, Playlist.class);
+    }
+
+    public Observable<StatusResult> deleteUserPlaylist(final String accessToken, final long playlistId) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("me/playlists/%d.json", playlistId));
+        setAccessToken(builder, accessToken);
+        return execute(Method.DELETE, builder, StatusResult.class, Status.class);
     }
 
     private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {

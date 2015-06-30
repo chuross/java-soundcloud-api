@@ -407,13 +407,29 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("POST"));
-        assertThat(request.getPath(), is("/playlists.json"));
+        assertThat(request.getPath(), is("/me/playlists.json"));
         assertThat(request.getBody().readUtf8(), is("playlist[title]=hoge&playlist[sharing]=private&playlist[tracks][][id]=1&playlist[tracks][][id]=2&client_id=test"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
 
         assertThat(result.getContent().getId(), is(405726L));
+    }
+
+    @Test
+    public void ログインユーザーのプレイリストを削除できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/status/success_ok.json")));
+
+        final StatusResult result = apiClient.deleteUserPlaylist("access-token", 12345L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("DELETE"));
+        assertThat(request.getPath(), is("/me/playlists/12345.json?client_id=test"));
+        assertThat(request.getHeader("Authorization"), is("OAuth access-token"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+        assertThat(result.getContent().getStatus(), is("200 - OK"));
     }
 
     private String readBody(final String filePath) throws Exception {
