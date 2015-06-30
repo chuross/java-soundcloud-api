@@ -34,6 +34,10 @@ public class SoundCloudApiClient extends RestClient {
         this.context = context;
     }
 
+    public RequestContext getContext() {
+        return context;
+    }
+
     public Observable<TokenResult> getAccessToken(final String grantType, final String code) {
         final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("oauth2/token.json"));
         builder.addParameter("client_secret", context.getClientSecret());
@@ -96,6 +100,15 @@ public class SoundCloudApiClient extends RestClient {
 
     public Observable<PlaylistResult> getPlaylist(final long playlistId) {
         return execute(Method.GET, new RestRequestBuilder(context.getUrl("playlists/%d.json", playlistId)), PlaylistResult.class, Playlist.class);
+    }
+
+    public Observable<PlaylistsResult> getPlaylists(final String query, final String representation, final Long limit, final Long offset) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("playlists.json"));
+        builder.addParameterIfNotNull("q", query);
+        builder.addParameterIfNotNull("representation", representation);
+        setPagingParameters(builder, limit, offset);
+        return execute(Method.GET, builder, PlaylistsResult.class, List.class, new TypeReference<List<Playlist>>() {
+        });
     }
 
     private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {

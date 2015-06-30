@@ -161,7 +161,7 @@ public class SoundCloudApiClientTest {
 
     @Test
     public void トラック情報の一覧を取得できる() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
 
         final TrackSearchFilterBuilder builder = new TrackSearchFilterBuilder();
         builder.setQuery("query");
@@ -195,7 +195,7 @@ public class SoundCloudApiClientTest {
 
     @Test
     public void ユーザーの投稿したトラックを取得できる() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
 
         final TracksResult result = apiClient.getUserTracks(12345L, 1L, 2L).toBlocking().single();
 
@@ -214,7 +214,7 @@ public class SoundCloudApiClientTest {
 
     @Test
     public void ログインユーザーのお気に入り一覧を取得できる() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
 
         final TracksResult result = apiClient.getFavoriteTracks("access-token", 1L, 2L).toBlocking().single();
 
@@ -234,7 +234,7 @@ public class SoundCloudApiClientTest {
 
     @Test
     public void ユーザーのお気に入り一覧を取得できる() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/track/success_list.json")));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
 
         final TracksResult result = apiClient.getFavoriteTracks(12345L, 1L, 2L).toBlocking().single();
 
@@ -338,6 +338,25 @@ public class SoundCloudApiClientTest {
         assertThat(playlist.getTracks().get(2).getId(), is(6668072L));
         assertThat(playlist.getTracks().get(3).getId(), is(6698933L));
         assertThat(playlist.getTracks().get(4).getId(), is(6770077L));
+    }
+
+    @Test
+    public void プレイリストの一覧を取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
+
+        final PlaylistsResult result = apiClient.getPlaylists("hoge", "id", 1L, 2L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/playlists.json?q=hoge&representation=id&limit=1&offset=2&client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().size(), is(3));
+        assertThat(result.getContent().get(0).getId(), is(57047389L));
+        assertThat(result.getContent().get(1).getId(), is(46742486L));
+        assertThat(result.getContent().get(2).getId(), is(46699421L));
     }
 
     private String readBody(final String filePath) throws Exception {
