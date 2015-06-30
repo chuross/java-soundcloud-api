@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -396,6 +397,23 @@ public class SoundCloudApiClientTest {
         assertThat(result.getContent().get(0).getId(), is(57047389L));
         assertThat(result.getContent().get(1).getId(), is(46742486L));
         assertThat(result.getContent().get(2).getId(), is(46699421L));
+    }
+
+    @Test
+    public void ログインユーザーのプレイリストを追加できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/playlist/success.json")));
+
+        final PlaylistResult result = apiClient.addUserPlaylist("access-token", "hoge", "private", Arrays.asList(1L, 2L)).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("POST"));
+        assertThat(request.getPath(), is("/playlists.json"));
+        assertThat(request.getBody().readUtf8(), is("playlist[title]=hoge&playlist[sharing]=private&playlist[tracks][][id]=1&playlist[tracks][][id]=2&client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().getId(), is(405726L));
     }
 
     private String readBody(final String filePath) throws Exception {

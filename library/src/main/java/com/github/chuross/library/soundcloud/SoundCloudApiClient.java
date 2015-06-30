@@ -125,6 +125,23 @@ public class SoundCloudApiClient extends RestClient {
         });
     }
 
+    public Observable<PlaylistResult> addUserPlaylist(final String accessToken, final String title, final String sharing) {
+        return addUserPlaylist(accessToken, title, sharing, null);
+    }
+
+    public Observable<PlaylistResult> addUserPlaylist(final String accessToken, final String title, final String sharing, final List<Long> ids) {
+        final RestRequestBuilder builder = new RestRequestBuilder(context.getUrl("playlists.json"));
+        setAccessToken(builder, accessToken);
+        builder.addParameter("playlist[title]", title);
+        builder.addParameterIfNotNull("playlist[sharing]", sharing);
+        if(ids != null && !ids.isEmpty()) {
+            for(final Long id : ids) {
+                builder.addParameterIfNotNull("playlist[tracks][][id]", id);
+            }
+        }
+        return execute(Method.POST, builder, PlaylistResult.class, Playlist.class);
+    }
+
     private static void setPagingParameters(final RestRequestBuilder builder, final Long limit, final Long offset) {
         builder.addParameterIfNotNull("limit", limit);
         builder.addParameterIfNotNull("offset", offset);
