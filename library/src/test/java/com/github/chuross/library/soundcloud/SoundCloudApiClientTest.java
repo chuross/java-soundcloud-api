@@ -359,6 +359,25 @@ public class SoundCloudApiClientTest {
         assertThat(result.getContent().get(2).getId(), is(46699421L));
     }
 
+    @Test
+    public void ユーザーのプレイリスト一覧を取得できる() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(readBody("/common/success_list.json")));
+
+        final PlaylistsResult result = apiClient.getUserPlaylists(3L, 1L, 2L).toBlocking().single();
+
+        final RecordedRequest request = server.takeRequest();
+        assertThat(request.getMethod(), is("GET"));
+        assertThat(request.getPath(), is("/users/3/playlists.json?limit=1&offset=2&client_id=test"));
+
+        assertThat(result.getStatus(), is(200));
+        assertThat(result.isSuccess(), is(true));
+
+        assertThat(result.getContent().size(), is(3));
+        assertThat(result.getContent().get(0).getId(), is(57047389L));
+        assertThat(result.getContent().get(1).getId(), is(46742486L));
+        assertThat(result.getContent().get(2).getId(), is(46699421L));
+    }
+
     private String readBody(final String filePath) throws Exception {
         return IOUtils.toString(getClass().getResourceAsStream(filePath));
     }
