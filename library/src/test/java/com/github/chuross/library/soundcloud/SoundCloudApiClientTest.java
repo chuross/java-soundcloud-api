@@ -183,7 +183,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/tracks.json?q=query&tags=tagA,tagB&filter=filter&license=license&bpm[from]=10&bpm[to]=20&duration[from]=30&duration[to]=40&created_at[from]=1970-01-01%2000:00:01&created_at[to]=1970-01-01%2000:00:02&ids=1,2,3&genres=g1,g2&types=type1,type2&limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/tracks.json?limit=1&tags=tagA,tagB&bpm[to]=20&genres=g1,g2&ids=1,2,3&bpm[from]=10&duration[from]=30&created_at[to]=1970-01-01%2000:00:02&q=query&duration[to]=40&client_id=test&created_at[from]=1970-01-01%2000:00:01&offset=2&types=type1,type2&license=license&filter=filter"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -202,7 +202,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/users/12345/tracks.json?limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/users/12345/tracks.json?limit=1&client_id=test&offset=2"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -221,7 +221,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/me/favorites.json?limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/me/favorites.json?limit=1&client_id=test&offset=2"));
         assertThat(request.getHeader("Authorization"), is("OAuth access-token"));
 
         assertThat(result.getStatus(), is(200));
@@ -241,7 +241,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/users/12345/favorites.json?limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/users/12345/favorites.json?limit=1&client_id=test&offset=2"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -349,7 +349,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/playlists.json?q=hoge&limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/playlists.json?limit=1&q=hoge&client_id=test&offset=2"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -368,7 +368,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/me/playlists.json?limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/me/playlists.json?limit=1&client_id=test&offset=2"));
         assertThat(request.getHeader("Authorization"), is("OAuth access-token"));
 
         assertThat(result.getStatus(), is(200));
@@ -388,7 +388,7 @@ public class SoundCloudApiClientTest {
 
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getPath(), is("/users/3/playlists.json?limit=1&offset=2&client_id=test"));
+        assertThat(request.getPath(), is("/users/3/playlists.json?limit=1&client_id=test&offset=2"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));
@@ -408,7 +408,7 @@ public class SoundCloudApiClientTest {
         final RecordedRequest request = server.takeRequest();
         assertThat(request.getMethod(), is("POST"));
         assertThat(request.getPath(), is("/me/playlists.json"));
-        assertThat(request.getBody().readUtf8(), is("playlist[title]=hoge&playlist[sharing]=private&playlist[tracks][][id]=1&playlist[tracks][][id]=2&client_id=test"));
+        assertThat(request.getBody().readUtf8(), is("playlist[title]=hoge&playlist[tracks][][id]=1&playlist[tracks][][id]=2&playlist[sharing]=private&client_id=test"));
 
         assertThat(result.getStatus(), is(200));
         assertThat(result.isSuccess(), is(true));

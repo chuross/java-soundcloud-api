@@ -1,6 +1,6 @@
 package com.github.chuross.library.soundcloud.parameter;
 
-import com.chuross.common.library.rest.RestRequestBuilder;
+import com.chuross.common.library.http.rest.RestRequestBuilder;
 import com.google.common.base.Joiner;
 
 import java.io.Serializable;

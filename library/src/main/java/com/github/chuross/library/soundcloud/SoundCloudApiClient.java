@@ -1,13 +1,9 @@
 package com.github.chuross.library.soundcloud;
 
-import com.chuross.common.library.http.DefaultHttpClient;
-import com.chuross.common.library.http.HeaderElement;
-import com.chuross.common.library.http.HttpClient;
-import com.chuross.common.library.http.Response;
-import com.chuross.common.library.rest.Method;
-import com.chuross.common.library.rest.RestClient;
-import com.chuross.common.library.rest.RestRequestBuilder;
-import com.chuross.common.library.rest.Result;
+import com.chuross.common.library.http.*;
+import com.chuross.common.library.http.rest.RestClient;
+import com.chuross.common.library.http.rest.RestRequestBuilder;
+import com.chuross.common.library.http.rest.Result;
 import com.chuross.common.library.util.JsonUtils;
 import com.github.chuross.library.soundcloud.element.*;
 import com.github.chuross.library.soundcloud.parameter.TrackSearchFilter;
@@ -26,7 +22,7 @@ public class SoundCloudApiClient extends RestClient {
     private RequestContext context;
 
     public SoundCloudApiClient(final RequestContext context) {
-        this(context, new DefaultHttpClient());
+        this(context, new OkHttpClient());
     }
 
     public SoundCloudApiClient(final RequestContext context, final HttpClient<?> client) {

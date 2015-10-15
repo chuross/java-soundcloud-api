@@ -1,7 +1,7 @@
 package com.github.chuross.library.soundcloud.result;
 
 import com.chuross.common.library.http.HeaderElement;
-import com.chuross.common.library.rest.AbstractResult;
+import com.chuross.common.library.http.rest.AbstractResult;
 import com.google.common.collect.ListMultimap;
 
 import java.net.HttpURLConnection;

@@ -38,8 +38,8 @@ uploadArchives {
 dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.chuross:common-library:0.1.4'
-    compile 'io.reactivex:rxjava:1.0.12'
+    compile 'com.github.chuross:common-library:1.0.1'
+    compile 'io.reactivex:rxjava:1.0.14'
 
     testCompile 'junit:junit:4.12'
     testCompile 'com.squareup.okhttp:mockwebserver:2.4.0'
